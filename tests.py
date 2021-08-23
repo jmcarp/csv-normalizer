@@ -47,17 +47,17 @@ def test_normalize_timestamp(value, expected):
 
 
 @pytest.mark.parametrize(
-    ["value", "expected", "exception_types"],
+    ["value", "expected", "exception_types", "exception_pattern"],
     [
-        ("12345", "12345", ()),
-        ("5", "00005", ()),
-        ("zip", None, (ValueError,)),
-        ("123456", None, (ValueError,)),
+        ("12345", "12345", (), None),
+        ("5", "00005", (), None),
+        ("zip", None, (ValueError,), "must be numeric"),
+        ("123456", None, (ValueError,), "must have <=5 digits"),
     ],
 )
-def test_normalize_zip(value, expected, exception_types):
+def test_normalize_zip(value, expected, exception_types, exception_pattern):
     if exception_types:
-        with pytest.raises(exception_types):
+        with pytest.raises(exception_types, match=exception_pattern):
             normalize.normalize_zip(value)
     else:
         normalized = normalize.normalize_zip(value)
